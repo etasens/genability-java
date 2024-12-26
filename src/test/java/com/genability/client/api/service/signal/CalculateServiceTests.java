@@ -9,6 +9,7 @@ import static org.hamcrest.core.Is.is;
 
 import com.genability.client.api.request.signal.GetCalculatedCostRequest;
 import com.genability.client.api.request.signal.GetMassCalculatedCostRequest;
+import com.genability.client.api.request.signal.GetSmartPriceRequest;
 import com.genability.client.api.request.signal.util.CondensedInput;
 import com.genability.client.api.service.BaseServiceTests;
 import com.genability.client.types.DetailLevel;
@@ -18,6 +19,7 @@ import com.genability.client.types.Response;
 import com.genability.client.types.signal.CalculatedCost;
 import com.genability.client.types.signal.MassCalculation;
 import com.genability.client.types.signal.Scenario;
+import com.genability.client.types.signal.SmartPrice;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -157,6 +159,23 @@ public class CalculateServiceTests extends BaseServiceTests {
         assertThat(scenarios.containsKey("E-1"), is(true));
         assertThat(scenarios.containsKey("E-6-TOU"), is(true));
         assertThat(scenarios.containsKey("E-6-TOU-SmartRate"), is(true));
+    }
+
+
+    @Test
+    public void testSmartPrice() {
+        // Based on Genability internal regression test for Signal APIs
+        GetSmartPriceRequest request = new GetSmartPriceRequest();
+        request.setFromDateTime(new DateTime("2016-07-13T00:00:00-07:00"));
+        request.setToDateTime(new DateTime("2016-08-11T00:00:00-07:00"));
+        request.setMasterTariffId(3236703L);
+
+        Response<SmartPrice> response = calculateService.getSmartPrice(request);
+        assertThat(response.getStatus(), equalTo("success"));
+        assertThat(response.getType(), equalTo("Price"));
+        assertThat(response.getResults().size(), equalTo(1));
+        assertThat(response.getResults().getFirst().getDescription(), equalTo("General - Time of Use Plus"));
+        assertThat(response.getResults().getFirst().getPriceChanges().size(), equalTo(86));
     }
 
     private static List<BigDecimal> asBigDecimal(List<Double> values) {

@@ -3,10 +3,13 @@ package com.genability.client.api.service.signal;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.genability.client.api.request.signal.GetCalculatedCostRequest;
 import com.genability.client.api.request.signal.GetMassCalculatedCostRequest;
+import com.genability.client.api.request.signal.GetSmartPriceRequest;
 import com.genability.client.api.service.BaseService;
+import com.genability.client.types.Price;
 import com.genability.client.types.Response;
 import com.genability.client.types.signal.CalculatedCost;
 import com.genability.client.types.signal.MassCalculation;
+import com.genability.client.types.signal.SmartPrice;
 
 
 public class CalculateService extends BaseService {
@@ -15,6 +18,9 @@ public class CalculateService extends BaseService {
             new TypeReference<Response<CalculatedCost>>() { };
     private static final TypeReference<Response<MassCalculation>> MASSCALCULATION_RESPONSE_TYPEREF =
             new TypeReference<Response<MassCalculation>>() { };
+    private static final TypeReference<Response<SmartPrice>> SMARTPRICE_RESPONSE_TYPEREF =
+        new TypeReference<Response<SmartPrice>>() { };
+
 
 
     public Response<CalculatedCost> getCalculatedCost(GetCalculatedCostRequest request) {
@@ -51,6 +57,30 @@ public class CalculateService extends BaseService {
 
         if (log.isDebugEnabled()) {
             log.debug("getMassCalculatedCost completed");
+        }
+
+        return response;
+    }
+
+    /**
+     * Calls the REST service to run a smart price calculation
+     * @param request The request.
+     * @return The return value.
+     */
+    public Response<SmartPrice> getSmartPrice(GetSmartPriceRequest request) {
+        if (log.isDebugEnabled()) {
+            log.debug("getSmartPrice");
+        }
+
+        String uri = "v1/prices/smart";
+
+        Response<SmartPrice> response = this.callGet(
+            uri,
+            request.getQueryParams(),
+            SMARTPRICE_RESPONSE_TYPEREF);
+
+        if (log.isDebugEnabled()) {
+            log.debug("getSmartPrice completed");
         }
 
         return response;
